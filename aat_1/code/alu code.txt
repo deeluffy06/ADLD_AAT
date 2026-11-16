@@ -1,0 +1,41 @@
+module alu(
+    input [3:0] a, b,
+    input [2:0] sel,
+    output reg [3:0] y,
+    output reg carry
+);
+always @(*) begin
+    carry = 0;
+    case(sel)
+        3'b000: {carry,y} = a + b;
+        3'b001: y = a - b;
+        3'b010: y = a & b;
+        3'b011: y = a | b;
+        3'b100: y = a ^ b;
+        default: y = 0;
+    endcase
+end
+endmodule
+
+module tb;
+reg [3:0] a,b;
+reg [2:0] sel;
+wire [3:0] y;
+wire carry;
+
+alu dut(a,b,sel,y,carry);
+
+initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0,tb);
+    a=4'd5; b=4'd3;
+
+    sel=0; #10;
+    sel=1; #10;
+    sel=2; #10;
+    sel=3; #10;
+    sel=4; #10;
+
+    $finish;
+end
+endmodule

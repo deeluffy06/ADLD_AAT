@@ -1,0 +1,76 @@
+
+`timescale 1ns/1ps
+
+module parity_generator_checker (
+    input [3:0] data,
+    input parity_type,
+    input received_parity,
+    output reg generated_parity,
+    output reg error
+);
+
+// Parity Generator
+always @(*) begin
+    if (parity_type == 0)
+        generated_parity = ^data;     // Even parity
+    else
+        generated_parity = ~^data;    // Odd parity
+end
+
+// Parity Checker
+always @(*) begin
+    error = ^{data, received_parity};
+
+    if (parity_type == 1)
+        error = ~error;
+end
+
+endmodule
+
+
+// TESTBENCH
+
+module parity_generator_checker_tb;
+
+reg [3:0] data;
+reg parity_type;
+reg received_parity;
+
+wire generated_parity;
+wire error;
+
+parity_generator_checker dut (
+    .data(data),
+    .parity_type(parity_type),
+    .received_parity(received_parity),
+    .generated_parity(generated_parity),
+    .error(error)
+);
+
+initial begin
+    $monitor("Time=%0t Data=%b Type=%b Generated=%b Received=%b Error=%b",
+             $time, data, parity_type, generated_parity,
+             received_parity, error);
+
+    // Even parity tests
+    parity_type = 0;
+
+    data = 4'b1010;
+    received_parity = 0; #10;
+
+    data = 4'b1110;
+    received_parity = 1; #10;
+
+    // Odd parity tests
+    parity_type = 1;
+
+    data = 4'b1010;
+    received_parity = 1; #10;
+
+    data = 4'b1110;
+    received_parity = 0; #10;
+
+    $finish;
+end
+
+endmodule

@@ -1,0 +1,22 @@
+module cmp_4bit (
+    input wire [3:0] A,
+    input wire [3:0] B,
+    output reg A_gt_B,
+    output reg A_lt_B,
+    output reg A_et_B
+);
+
+always @(*) begin
+    A_gt_B = 1'b0;
+    A_lt_B = 1'b0;
+    A_et_B = 1'b0;
+
+    if (A > B)
+        A_gt_B = 1'b1;
+    else if (A < B)
+        A_lt_B = 1'b1;
+    else
+        A_et_B = 1'b1;
+end
+
+endmodule
